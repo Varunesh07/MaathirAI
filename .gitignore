@@ -1,0 +1,23 @@
+# Python / Backend
+backend/venv/
+backend/__pycache__/
+backend/.env
+*.pyc
+*.pyo
+*.pyd
+
+# Private Medical Data & Logs
+backend/storage/chat_memory.json
+backend/storage/medical_memory.json
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+npm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db

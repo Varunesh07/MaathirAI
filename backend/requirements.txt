@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+easyocr
+PyMuPDF
+groq
+httpx
+python-dotenv
+thefuzz
+python-Levenshtein
+pandas

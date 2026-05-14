@@ -1,29 +1,29 @@
-# MaatharAI - Medical Interaction Assistant
+# MaathirAI - Medical Interaction Assistant
 
-MaatharAI is an intelligent, full-stack medical awareness assistant built specifically for Indian patients and caregivers. It helps you understand your medications, decode medical reports, and safely check for dangerous drug-drug interactions — all in one place.
+MaathirAI is an intelligent, full-stack medical awareness assistant built specifically for Indian patients and caregivers. It helps you understand your medications, decode medical reports, and safely check for dangerous drug-drug interactions — all in one place.
  
-Whether you're an elderly patient managing multiple prescriptions, a working adult tracking your own medicines, or a caregiver handling a family member's health — MaatharAI works the same way: upload a photo or PDF, and let the AI do the heavy lifting.
+Whether you're an elderly patient managing multiple prescriptions, a working adult tracking your own medicines, or a caregiver handling a family member's health — MaathirAI works the same way: upload a photo or PDF, and let the AI do the heavy lifting.
  
-> **The name comes from *Maathariai* (மாத்திரை) — the Tamil word for *tablet*. Since MaatharAI uses AI to identify and analyse tablets and medicines, the name is a natural fit: Maathariai + AI = MaatharAI.**
+> **The name comes from *Maathirai* (மாத்திரை) — the Tamil word for *tablet*. Since MaathirAI uses AI to identify and analyse tablets and medicines, the name is a natural fit: Maathirai + AI = MaathirAI.**
 
 ---
  
-## 🎯 What MaatharAI Actually Does
+## 🎯 What MaathirAI Actually Does
  
 ### 1. Reads your medicine strips, prescriptions, and reports
-Upload a blurry photo of a Dolo 650 strip, a typed prescription PDF, or a blood test report. MaatharAI uses OCR to pull out all the text, then uses an LLM to identify what's medically relevant — medication names, dosages, diagnosed conditions, and listed allergies.
+Upload a blurry photo of a Dolo 650 strip, a typed prescription PDF, or a blood test report. MaathirAI uses OCR to pull out all the text, then uses an LLM to identify what's medically relevant — medication names, dosages, diagnosed conditions, and listed allergies.
  
 ### 2. Understands Indian brand names
-Most drug interaction databases are US-centric and have no idea what *Telma 40*, *Crocin Advance*, or *Combiflam* are. MaatharAI solves this by mapping Indian brand names to their active generic ingredients (e.g. *Dolo 650 → Paracetamol 650mg*, *Augmentin 625 → Amoxycillin + Clavulanic Acid*) using a local Indian medicine CSV database before any interaction check happens.
+Most drug interaction databases are US-centric and have no idea what *Telma 40*, *Crocin Advance*, or *Combiflam* are. MaathirAI solves this by mapping Indian brand names to their active generic ingredients (e.g. *Dolo 650 → Paracetamol 650mg*, *Augmentin 625 → Amoxycillin + Clavulanic Acid*) using a local Indian medicine CSV database before any interaction check happens.
  
 ### 3. Checks for dangerous drug combinations
-Once the active ingredients are known, MaatharAI checks every pair against a local Drug-Drug Interaction (DDI) database extracted from DrugBank v5.1. It flags interactions as **Safe**, **Moderate**, or **Severe** with a plain-English explanation. If a drug isn't in the structured database, Groq AI provides an estimated interaction — always clearly labelled as `[AI-ESTIMATED]`.
+Once the active ingredients are known, MaathirAI checks every pair against a local Drug-Drug Interaction (DDI) database extracted from DrugBank v5.1. It flags interactions as **Safe**, **Moderate**, or **Severe** with a plain-English explanation. If a drug isn't in the structured database, Groq AI provides an estimated interaction — always clearly labelled as `[AI-ESTIMATED]`.
  
 ### 4. Builds and remembers your medication profile
-Every uploaded document adds to a persistent medical profile stored across sessions. MaatharAI remembers what medicines you've previously added, your listed conditions, and your allergies — so when you upload a new prescription, it checks against your entire history, not just the current file.
+Every uploaded document adds to a persistent medical profile stored across sessions. MaathirAI remembers what medicines you've previously added, your listed conditions, and your allergies — so when you upload a new prescription, it checks against your entire history, not just the current file.
  
 ### 5. Lets you ask questions naturally
-The chat interface lets you ask things like *"Can I take ibuprofen with my current medicines?"* or *"What does my Warfarin interact with?"* — and MaatharAI answers using your stored profile as context, not generic information.
+The chat interface lets you ask things like *"Can I take ibuprofen with my current medicines?"* or *"What does my Warfarin interact with?"* — and MaathirAI answers using your stored profile as context, not generic information.
  
 ---
 
@@ -33,7 +33,7 @@ The chat interface lets you ask things like *"Can I take ibuprofen with my curre
 - **Indian Medicine Database:** Automatically maps regional Indian brand names (e.g., *Dolo 650*, *Telma 40*) to their active generic ingredients using a local CSV database — solving the biggest gap in every existing drug interaction tool for Indian users.
 - **Automated Interaction Checking:** Checks your active ingredient list against a local DDI database (DrugBank v5.1), instantly flagging Safe, Moderate, or Severe interactions. Features a Groq AI fallback for drugs not found in the structured database, with all AI-estimated results clearly labelled.
 - **Smart Sequential Uploads:** The React frontend automatically batches multi-file uploads into perfectly timed sequential requests, maximising OCR accuracy and preventing the AI from getting overwhelmed.
-- **Persistent Medical Profile:** MaatharAI maintains a continuous conversation state (`chat_memory.json`) and a living medical profile (`medical_memory.json`) — acting like a dedicated assistant who remembers your exact blood sugar metrics from an earlier report and cross-references them with your latest prescription.
+- **Persistent Medical Profile:** MaathirAI maintains a continuous conversation state (`chat_memory.json`) and a living medical profile (`medical_memory.json`) — acting like a dedicated assistant who remembers your exact blood sugar metrics from an earlier report and cross-references them with your latest prescription.
 - **Designed for Indian Users:** Brand name resolution, support for Indian pharmaceutical naming conventions, and an interface built for users ranging from elderly patients to tech-savvy caregivers.
 
 ---
@@ -128,7 +128,7 @@ npm run dev
 
 ## 💊 Example Use Cases
  
-| Situation | What you upload | What MaatharAI does |
+| Situation | What you upload | What MaathirAI does |
 |-----------|----------------|---------------------|
 | Just bought Dolo 650 and already take Warfarin | Photo of Dolo 650 strip | Resolves to Paracetamol, checks against Warfarin, flags interaction severity |
 | Got a new prescription with 3 medicines | Prescription PDF | Extracts all 3 drugs, checks each pair, updates your profile |
@@ -138,4 +138,4 @@ npm run dev
 ---
 
 ## ⚠️ Disclaimer
-**MaatharAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions or changing your medication regimen. AI-estimated interactions must always be clinically verified.
+**MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions or changing your medication regimen. AI-estimated interactions must always be clinically verified.

@@ -37,7 +37,7 @@ function App() {
             <Pill size={20} className="text-white" />
           </div>
           <div className="flex items-baseline gap-2">
-            <h1 className="font-bold text-lg tracking-tight">MaatharAI</h1>
+            <h1 className="font-bold text-lg tracking-tight">MaathirAI</h1>
             <span className="text-medic-accent text-sm font-medium hidden sm:inline">— Know before you take</span>
           </div>
         </div>

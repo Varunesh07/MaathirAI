@@ -1,6 +1,9 @@
 import json
 import os
 from datetime import datetime
+import threading
+
+_lock = threading.Lock()
 
 STORAGE_DIR = "storage"
 MEDICAL_PATH = os.path.join(STORAGE_DIR, "medical_memory.json")
@@ -9,13 +12,15 @@ MAX_CHAT = 50
 
 
 def get_medical_memory() -> dict:
-    with open(MEDICAL_PATH, "r") as f:
-        return json.load(f)
+    with _lock:
+        with open(MEDICAL_PATH, "r") as f:
+            return json.load(f)
 
 
 def save_medical_memory(memory: dict):
-    with open(MEDICAL_PATH, "w") as f:
-        json.dump(memory, f, indent=2)
+    with _lock:
+        with open(MEDICAL_PATH, "w") as f:
+            json.dump(memory, f, indent=2)
 
 
 def add_to_medical_memory(new_data: dict):
@@ -55,8 +60,9 @@ def get_medication_names_only() -> list:
 
 
 def get_chat_history() -> list:
-    with open(CHAT_PATH, "r") as f:
-        return json.load(f)
+    with _lock:
+        with open(CHAT_PATH, "r") as f:
+            return json.load(f)
 
 
 def add_chat_message(role: str, message: str):
@@ -68,8 +74,9 @@ def add_chat_message(role: str, message: str):
     })
     if len(history) > MAX_CHAT:
         history = history[-MAX_CHAT:]
-    with open(CHAT_PATH, "w") as f:
-        json.dump(history, f, indent=2)
+    with _lock:
+        with open(CHAT_PATH, "w") as f:
+            json.dump(history, f, indent=2)
 
 
 def clear_medical_memory():

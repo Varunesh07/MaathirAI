@@ -10,31 +10,27 @@ Whether you're an elderly patient managing multiple prescriptions, a working adu
  
 ## 🎯 What MaathirAI Actually Does
  
-### 1. Reads your medicine strips, prescriptions, and reports
-Upload a blurry photo of a Dolo 650 strip, a typed prescription PDF, or a blood test report. MaathirAI uses OCR to pull out all the text, then uses an LLM to identify what's medically relevant — medication names, dosages, diagnosed conditions, and listed allergies.
- 
-### 2. Understands Indian brand names
-Most drug interaction databases are US-centric and have no idea what *Telma 40*, *Crocin Advance*, or *Combiflam* are. MaathirAI solves this by mapping Indian brand names to their active generic ingredients (e.g. *Dolo 650 → Paracetamol 650mg*, *Augmentin 625 → Amoxycillin + Clavulanic Acid*) using a local Indian medicine CSV database before any interaction check happens.
- 
-### 3. Checks for dangerous drug combinations
-Once the active ingredients are known, MaathirAI checks every pair against a local Drug-Drug Interaction (DDI) database extracted from DrugBank v5.1. It flags interactions as **Safe**, **Moderate**, or **Severe** with a plain-English explanation. If a drug isn't in the structured database, Groq AI provides an estimated interaction — always clearly labelled as `[AI-ESTIMATED]`.
- 
-### 4. Builds and remembers your medication profile
-Every uploaded document adds to a persistent medical profile stored across sessions. MaathirAI remembers what medicines you've previously added, your listed conditions, and your allergies — so when you upload a new prescription, it checks against your entire history, not just the current file.
- 
-### 5. Lets you ask questions naturally
-The chat interface lets you ask things like *"Can I take ibuprofen with my current medicines?"* or *"What does my Warfarin interact with?"* — and MaathirAI answers using your stored profile as context, not generic information.
- 
+### 1. Autonomous Agentic Reasoning (New!)
+Unlike standard chatbots, MaathirAI now uses a **LangChain-powered Agentic Architecture**. When you upload a document or ask a question, the AI doesn't just respond; it *thinks* and *acts*. It autonomously decides which tools to call (e.g., resolving a brand name or checking a database) based on the context of your request.
+
+### 2. Understands Indian Brand Names
+Most drug interaction databases are US-centric and have no idea what *Telma 40*, *Crocin Advance*, or *Combiflam* are. MaathirAI solves this by mapping Indian brand names to their active generic ingredients using a specialized tool that queries a local Indian medicine database of ~20,000 products.
+
+### 3. Real-Time Interaction Checking
+MaathirAI checks every medication against a local Drug-Drug Interaction (DDI) database. It flags interactions as **Safe**, **Moderate**, or **Severe** with a plain-English explanation. For drugs not in the structured database, the Agent uses its medical reasoning to provide an estimated interaction.
+
+### 4. Continuous Medical Profile Management
+The Agent actively manages your medical profile. If it sees a condition (like "Diabetes") or an allergy in a report, it automatically saves it to your `medical_memory.json`. When you upload a new prescription next month, it already remembers your previous history and cross-references everything instantly.
+
 ---
 
 ## 🌟 Key Features
  
-- **Multi-Modal Document Processing:** Upload scanned PDFs, digital PDFs, or photos (JPG/PNG). The system uses `PyMuPDF` for native text extraction and `EasyOCR` (with dynamic upscaling) to read tiny, sideways text on pill strips.
-- **Indian Medicine Database:** Automatically maps regional Indian brand names (e.g., *Dolo 650*, *Telma 40*) to their active generic ingredients using a local CSV database — solving the biggest gap in every existing drug interaction tool for Indian users.
-- **Automated Interaction Checking:** Checks your active ingredient list against a local DDI database (DrugBank v5.1), instantly flagging Safe, Moderate, or Severe interactions. Features a Groq AI fallback for drugs not found in the structured database, with all AI-estimated results clearly labelled.
-- **Smart Sequential Uploads:** The React frontend automatically batches multi-file uploads into perfectly timed sequential requests, maximising OCR accuracy and preventing the AI from getting overwhelmed.
-- **Persistent Medical Profile:** MaathirAI maintains a continuous conversation state (`chat_memory.json`) and a living medical profile (`medical_memory.json`) — acting like a dedicated assistant who remembers your exact blood sugar metrics from an earlier report and cross-references them with your latest prescription.
-- **Designed for Indian Users:** Brand name resolution, support for Indian pharmaceutical naming conventions, and an interface built for users ranging from elderly patients to tech-savvy caregivers.
+- **Autonomous Tool-Use:** Powered by LangChain's `create_tool_calling_agent`, the AI uses specialized tools for brand resolution, interaction checking, and profile saving.
+- **Multi-Modal Document Processing:** Uses `PyMuPDF` for digital PDFs and `EasyOCR` (with dynamic upscaling) to read complex, multi-page prescriptions and pill strips.
+- **Thread-Safe Memory Management:** Implements a robust locking system to handle multiple parallel tool calls (e.g., saving three medicines at once) without data corruption.
+- **Streaming Response:** Token-by-token streaming from the Agent to the frontend for a fast, responsive user experience.
+- **Indian Context First:** Built from the ground up to handle regional pharmaceutical naming conventions and Indian lab report formats.
 
 ---
 
@@ -48,30 +44,21 @@ The chat interface lets you ask things like *"Can I take ibuprofen with my curre
 
 **Backend:**
 - Python 3 + FastAPI
-- Groq Cloud API (`llama-3.3-70b-versatile` for lightning-fast entity extraction and conversational reasoning)
+- **LangChain & LangChain-Groq** (Agentic reasoning and tool-calling framework)
+- Groq Cloud API (`llama-3.3-70b-versatile` for high-speed reasoning)
 - EasyOCR & PyMuPDF (Document processing)
 - TheFuzz (Fuzzy string matching for drug resolution)
-- Pandas (Indian medicine CSV + DDI database lookups)
+- Pandas (Structured data processing)
 
 **Data Sources:**
-- Indian Medicine Dataset — brand name to active ingredient mapping (~20,000 Indian medicines)
-- Mendeley DDI Dataset — DrugBank v5.1 drug-drug interaction pairs (structured, peer-reviewed)
-
----
-
-## ⚙️ Prerequisites
-
-To run this project locally, you will need:
-- **Node.js** (v18+)
-- **Python** (v3.9+)
-- A **Groq API Key** (Free tier works perfectly — get one at console.groq.com)
+- Indian Medicine Dataset — brand name to active ingredient mapping
+- Mendeley DDI Dataset — DrugBank v5.1 drug-drug interaction pairs
 
 ---
 
 ## 🚀 How to Run Locally
 
 ### 1. Backend Setup
-
 Open a terminal and navigate to the `backend` folder:
 ```bash
 cd backend
@@ -79,13 +66,9 @@ cd backend
 
 Create and activate a virtual environment:
 ```bash
-# On Windows:
 python -m venv venv
-.\venv\Scripts\activate
-
-# On Mac/Linux:
-python3 -m venv venv
-source venv/bin/activate
+.\venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
 ```
 
 Install the required Python packages:
@@ -93,62 +76,24 @@ Install the required Python packages:
 pip install -r requirements.txt
 ```
 
-Set up your Environment Variables:
-1. Create a file named `.env` inside the `backend` directory.
-2. Add your Groq API key:
-   ```env
-   GROQ_API_KEY=your_groq_api_key_here
-   ```
-
-Start the FastAPI server:
-```bash
-uvicorn main:app --reload --port 8000
-```
-*The backend API will be running at `http://localhost:8000`*
-
 ### 2. Frontend Setup
-
 Open a **new** terminal and navigate to the `frontend` folder:
 ```bash
 cd frontend
-```
-
-Install the Node modules:
-```bash
 npm install
-```
-
-Start the Vite development server:
-```bash
 npm run dev
 ```
-*The frontend UI will be running at `http://localhost:5173`*
-
----
-
-## 💊 Example Use Cases
- 
-| Situation | What you upload | What MaathirAI does |
-|-----------|----------------|---------------------|
-| Just bought Dolo 650 and already take Warfarin | Photo of Dolo 650 strip | Resolves to Paracetamol, checks against Warfarin, flags interaction severity |
-| Got a new prescription with 3 medicines | Prescription PDF | Extracts all 3 drugs, checks each pair, updates your profile |
-| Want to know if your blood report affects your medicines | Blood test PDF | Extracts conditions (e.g. elevated creatinine), stores against your profile |
-| Ask a question without uploading | Type: "Can I take Combiflam?" | AI checks your stored profile, resolves Combiflam to Ibuprofen + Paracetamol, answers with context |
-
----
-
-## ⚠️ Disclaimer
-**MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions or changing your medication regimen. AI-estimated interactions must always be clinically verified.
 
 ---
 
 ## 🔮 Roadmap (What's Next?)
-**Note: The current iteration of MaathirAI is a Minimum Viable Product (MVP).** 
 
-We are actively working on a major upgraded version coming very soon! Future features planned include:
-- **LangChain Integration:** Moving beyond manual context injection to a full LangChain architecture for advanced multi-agent workflows, tool use, and sophisticated memory management.
-- **Enhanced AI Architecture:** Incorporating advanced RAG (Retrieval-Augmented Generation) and vector databases for deeper clinical insights.
-- Enhanced OCR pipelines for heavily degraded prescriptions
-- User authentication and multi-profile support (e.g., managing profiles for different family members)
-- Integration with live clinical databases for real-time interaction updates
-- Mobile application deployment
+- **Phase 3: RAG Implementation:** Adding vector databases (ChromaDB/LanceDB) for deep search across long medical histories and clinical knowledge bases.
+- **Phase 4: SQL Migration:** Moving from JSON-based memory to a robust SQL backend for multi-user support.
+- **Enhanced OCR:** Specialized pipelines for handwritten doctor prescriptions.
+- **Multi-Profile Support:** Manage separate health profiles for different family members.
+
+---
+
+## ⚠️ Disclaimer
+**MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions. AI-estimated interactions must always be clinically verified.

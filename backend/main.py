@@ -3,6 +3,9 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 from routes import upload, chat, interactions
 import os, json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="Medical Interaction Assistant")
 

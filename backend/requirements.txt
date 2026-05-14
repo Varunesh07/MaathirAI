@@ -9,3 +9,6 @@ python-dotenv
 thefuzz
 python-Levenshtein
 pandas
+langchain
+langchain-groq
+langchain-core

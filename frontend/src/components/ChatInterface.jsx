@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, Loader2, FileImage, Bot, User } from 'lucide-react';
+import { Paperclip, Send, Loader2, FileImage } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { uploadFile, sendMessage } from '../api';
+import { uploadFile, streamMessage } from '../api';
 
 export default function ChatInterface({ history, reloadData }) {
   const [input, setInput] = useState('');
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
+  const [streamedResponse, setStreamedResponse] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [tempUserMessage, setTempUserMessage] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -16,7 +19,7 @@ export default function ChatInterface({ history, reloadData }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [history, loading]);
+  }, [history, streamedResponse, loading]);
 
   const handleFileSelect = (e) => {
     if (e.target.files) {
@@ -46,25 +49,50 @@ export default function ChatInterface({ history, reloadData }) {
       if (files.length > 0) {
         // Sequential smart upload logic
         for (let i = 0; i < files.length; i++) {
-          setLoadingText(`Analyzing file ${i + 1} of ${files.length}...`);
-          const isLast = i === files.length - 1;
-          const msg = isLast ? input : null; // Only send the user's text message with the LAST file
-          await uploadFile(files[i], msg, !isLast);
+          setLoadingText(`Uploading file ${i + 1} of ${files.length}...`);
+          await uploadFile(files[i]);
           await reloadData(); // Update UI after each file to show progress!
         }
-      } else {
+        
+        const userMsg = input || "I have uploaded some documents. Please analyze them.";
+        setInput('');
+        setTempUserMessage({ role: 'user', message: userMsg });
+        setIsStreaming(true);
         setLoadingText('Thinking...');
-        await sendMessage(input);
+        setStreamedResponse('');
+
+        await streamMessage(userMsg, (chunk) => {
+          setLoadingText('');
+          setStreamedResponse(prev => prev + chunk);
+        });
+
+        await reloadData();
+      } else {
+        const userMsg = input;
+        setInput('');
+        setTempUserMessage({ role: 'user', message: userMsg });
+        setIsStreaming(true);
+        setLoadingText('Thinking...');
+        setStreamedResponse('');
+
+        await streamMessage(userMsg, (chunk) => {
+          setLoadingText('');
+          setStreamedResponse(prev => prev + chunk);
+        });
+
         await reloadData();
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error sending message:", err);
       alert('Error communicating with server.');
     } finally {
       setLoading(false);
+      setIsStreaming(false);
+      setTempUserMessage(null);
+      setStreamedResponse('');
       setLoadingText('');
-      setInput('');
       setFiles([]);
+      setInput('');
     }
   };
 
@@ -72,7 +100,7 @@ export default function ChatInterface({ history, reloadData }) {
     <div className="flex-1 flex flex-col h-full bg-medic-chatbg relative">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-        {history.length === 0 && (
+        {history.length === 0 && !tempUserMessage && (
           <div className="bg-white border border-medic-border rounded-xl p-6 max-w-sm shadow-sm">
             <p className="text-slate-800 text-sm leading-relaxed">
               Hello! Upload a prescription, medicine strip, or medical report — or just ask me anything about your medicines.
@@ -111,7 +139,27 @@ export default function ChatInterface({ history, reloadData }) {
           );
         })}
 
-        {loading && (
+        {tempUserMessage && (
+          <div className="flex justify-end animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="max-w-[85%] md:max-w-[75%] rounded-2xl p-4 shadow-sm bg-medic-primary text-white rounded-br-sm">
+              <div className="prose prose-sm max-w-none prose-p:leading-relaxed text-white prose-strong:text-white">
+                <ReactMarkdown>{tempUserMessage.message}</ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isStreaming && streamedResponse && (
+          <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="max-w-[85%] md:max-w-[75%] rounded-2xl p-4 shadow-sm bg-white border border-medic-border text-slate-800 rounded-bl-sm">
+              <div className="prose prose-sm max-w-none prose-p:leading-relaxed">
+                <ReactMarkdown>{streamedResponse}</ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {loading && loadingText && (
           <div className="flex justify-start">
             <div className="bg-white border border-medic-border rounded-2xl rounded-bl-sm p-4 shadow-sm flex items-center gap-3">
               <Loader2 className="animate-spin text-medic-accent" size={20} />

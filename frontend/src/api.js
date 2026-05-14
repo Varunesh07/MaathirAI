@@ -31,13 +31,9 @@ export const clearMemory = async () => {
   await api.delete('/interactions/memory');
 };
 
-export const uploadFile = async (file, message = null, skipExplanation = false) => {
+export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append('files', file); 
-  if (message) {
-    formData.append('message', message);
-  }
-  formData.append('skip_explanation', skipExplanation);
   const res = await api.post('/upload/', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
@@ -47,4 +43,27 @@ export const uploadFile = async (file, message = null, skipExplanation = false) 
 export const sendMessage = async (message) => {
   const res = await api.post('/chat/', { message });
   return res.data;
+};
+
+export const streamMessage = async (message, onChunk) => {
+  const res = await fetch('http://localhost:8000/chat/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  });
+
+  if (!res.ok) throw new Error('Network response was not ok');
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let done = false;
+
+  while (!done) {
+    const { value, done: readerDone } = await reader.read();
+    done = readerDone;
+    if (value) {
+      const chunk = decoder.decode(value, { stream: true });
+      onChunk(chunk);
+    }
+  }
 };

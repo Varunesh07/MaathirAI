@@ -139,3 +139,16 @@ npm run dev
 
 ## ⚠️ Disclaimer
 **MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions or changing your medication regimen. AI-estimated interactions must always be clinically verified.
+
+---
+
+## 🔮 Roadmap (What's Next?)
+**Note: The current iteration of MaathirAI is a Minimum Viable Product (MVP).** 
+
+We are actively working on a major upgraded version coming very soon! Future features planned include:
+- **LangChain Integration:** Moving beyond manual context injection to a full LangChain architecture for advanced multi-agent workflows, tool use, and sophisticated memory management.
+- **Enhanced AI Architecture:** Incorporating advanced RAG (Retrieval-Augmented Generation) and vector databases for deeper clinical insights.
+- Enhanced OCR pipelines for heavily degraded prescriptions
+- User authentication and multi-profile support (e.g., managing profiles for different family members)
+- Integration with live clinical databases for real-time interaction updates
+- Mobile application deployment

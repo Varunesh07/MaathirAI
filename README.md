@@ -36,7 +36,7 @@ The AI is trained to be your medical secretary. If it spots a new medication, al
 
 ## 📸 Screenshots
 
-*Add your application screenshots here to showcase the UI and features.*
+![MaathirAI Application Screenshot](./Screenshot%202026-05-15%20200032.png)
 
 ---
 

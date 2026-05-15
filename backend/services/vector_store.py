@@ -53,3 +53,11 @@ def search(collection_name: str, query: str, top_k: int = 3) -> List[str]:
     )
     # `results['documents']` is a list of list
     return results.get('documents', [[]])[0]
+
+def clear_vector_store(collection_name: str = "medical_reports"):
+    """Completely wipe the specified collection from ChromaDB."""
+    try:
+        _client.delete_collection(name=collection_name)
+    except Exception:
+        # Collection might not exist yet
+        pass

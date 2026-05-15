@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 import threading
+from services.vector_store import clear_vector_store
 
 _lock = threading.Lock()
 
@@ -81,6 +82,8 @@ def add_chat_message(role: str, message: str):
 
 def clear_medical_memory():
     save_medical_memory({"medications": [], "conditions": [], "allergies": []})
+    clear_vector_store()
+
 
 
 def clear_chat_history():

@@ -65,10 +65,7 @@ def save_condition_or_allergy(entity_type: str, value: str) -> str:
 
 @tool
 def search_medical_history(query: str) -> str:
-    """Search stored medical report chunks for relevant information.
-    Uses the vector store (ChromaDB) to perform a similarity search and returns
-    the concatenated top‑k matching chunks.
-    """
+    """Use this tool to search the user's past medical reports, sugar levels, and test results from the database."""
     # Retrieve top 3 relevant chunks
     results = vector_store.search(collection_name="medical_reports", query=query, top_k=3)
     if not results:

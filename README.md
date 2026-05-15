@@ -10,74 +10,59 @@ Whether you're an elderly patient managing multiple prescriptions, a working adu
  
 ## 🎯 What MaathirAI Actually Does
  
-### 1. Autonomous Agentic Reasoning (New!)
-Unlike standard chatbots, MaathirAI now uses a **LangChain-powered Agentic Architecture**. When you upload a document or ask a question, the AI doesn't just respond; it *thinks* and *acts*. It autonomously decides which tools to call (e.g., resolving a brand name or checking a database) based on the context of your request.
+### 1. Autonomous Agentic Reasoning
+Powered by **LangChain**, MaathirAI uses an "Agentic" architecture. It doesn't just chat; it *reasons*. It autonomously decides when to look up an Indian brand name, when to check for a drug-drug interaction, and when to dig into your medical history.
 
-### 2. Understands Indian Brand Names
-Most drug interaction databases are US-centric and have no idea what *Telma 40*, *Crocin Advance*, or *Combiflam* are. MaathirAI solves this by mapping Indian brand names to their active generic ingredients using a specialized tool that queries a local Indian medicine database of ~20,000 products.
+### 2. Medical RAG (Retrieval-Augmented Generation)
+We've integrated **ChromaDB** and **Sentence-Transformers** to give the AI a "long-term memory." Every time you upload a report, it is chunked, vectorized, and stored. Even if you clear your chat history, the AI can still "retrieve" specific details like your blood sugar level or past test results from its vector database.
 
-### 3. Real-Time Interaction Checking
-MaathirAI checks every medication against a local Drug-Drug Interaction (DDI) database. It flags interactions as **Safe**, **Moderate**, or **Severe** with a plain-English explanation. For drugs not in the structured database, the Agent uses its medical reasoning to provide an estimated interaction.
+### 3. Resolves Indian Brand Names
+Most drug databases are US-centric. MaathirAI maps Indian brands like *Telma 40* or *Glimestar M2* to their generic ingredients (Telmisartan, Metformin, etc.) using a local database of ~20,000 products, ensuring accurate interaction checks.
 
-### 4. Continuous Medical Profile Management
-The Agent actively manages your medical profile. If it sees a condition (like "Diabetes") or an allergy in a report, it automatically saves it to your `medical_memory.json`. When you upload a new prescription next month, it already remembers your previous history and cross-references everything instantly.
+### 4. Smart Profile Management
+The AI is trained to be your medical secretary. If it spots a new medication, allergy, or condition in a report, it automatically updates your profile. It uses a **bulk-saving logic** to ensure that multiple findings in a single report are all captured accurately.
 
 ---
 
 ## 🌟 Key Features
  
-- **Autonomous Tool-Use:** Powered by LangChain's `create_tool_calling_agent`, the AI uses specialized tools for brand resolution, interaction checking, and profile saving.
-- **Multi-Modal Document Processing:** Uses `PyMuPDF` for digital PDFs and `EasyOCR` (with dynamic upscaling) to read complex, multi-page prescriptions and pill strips.
-- **Thread-Safe Memory Management:** Implements a robust locking system to handle multiple parallel tool calls (e.g., saving three medicines at once) without data corruption.
-- **Streaming Response:** Token-by-token streaming from the Agent to the frontend for a fast, responsive user experience.
-- **Indian Context First:** Built from the ground up to handle regional pharmaceutical naming conventions and Indian lab report formats.
+- **Agentic Search:** Uses the `search_medical_history` tool to query past reports in real-time.
+- **Vectorized OCR Pipeline:** Automatically indexes PDFs and images into a local ChromaDB store upon upload.
+- **Natural Conversations:** Designed with a "Short & Sweet" persona—it speaks like a friendly neighborhood doctor, avoiding heavy jargon and internal technical details.
+- **Interactive Sidebar:** Real-time sync between the AI's "thoughts" and the visual UI (Medications list, Interaction table).
+- **Privacy First:** Includes a "Clear Memory" function that wipes both your JSON profile and your vectorized ChromaDB history.
 
 ---
 
 ## 🛠️ Technology Stack
 
 **Frontend:**
-- React + Vite
-- Tailwind CSS (v3)
-- Lucide React (Icons)
-- Axios & React-Markdown
+- React + Vite & Tailwind CSS
+- Lucide React (Icons) & React-Markdown
 
 **Backend:**
-- Python 3 + FastAPI
-- **LangChain & LangChain-Groq** (Agentic reasoning and tool-calling framework)
-- Groq Cloud API (`llama-3.3-70b-versatile` for high-speed reasoning)
+- FastAPI (Python)
+- **LangChain** (Agentic Framework)
+- **ChromaDB** (Vector Database for RAG)
+- **Sentence-Transformers** (`all-MiniLM-L6-v2` for Embeddings)
+- Groq Cloud API (`llama-3.1-8b-instant` for ultra-fast reasoning)
 - EasyOCR & PyMuPDF (Document processing)
-- TheFuzz (Fuzzy string matching for drug resolution)
-- Pandas (Structured data processing)
-
-**Data Sources:**
-- Indian Medicine Dataset — brand name to active ingredient mapping
-- Mendeley DDI Dataset — DrugBank v5.1 drug-drug interaction pairs
 
 ---
 
 ## 🚀 How to Run Locally
 
 ### 1. Backend Setup
-Open a terminal and navigate to the `backend` folder:
 ```bash
 cd backend
-```
-
-Create and activate a virtual environment:
-```bash
 python -m venv venv
-.\venv\Scripts\activate  # Windows
-source venv/bin/activate  # Mac/Linux
-```
-
-Install the required Python packages:
-```bash
+.\venv\Scripts\activate
 pip install -r requirements.txt
+# Set your GROQ_API_KEY in a .env file
+uvicorn main:app --reload
 ```
 
 ### 2. Frontend Setup
-Open a **new** terminal and navigate to the `frontend` folder:
 ```bash
 cd frontend
 npm install
@@ -86,12 +71,12 @@ npm run dev
 
 ---
 
-## 🔮 Roadmap (What's Next?)
+## 🔮 Roadmap (Phase 4 & Beyond)
 
-- **Phase 3: RAG Implementation:** Adding vector databases (ChromaDB/LanceDB) for deep search across long medical histories and clinical knowledge bases.
-- **Phase 4: SQL Migration:** Moving from JSON-based memory to a robust SQL backend for multi-user support.
-- **Enhanced OCR:** Specialized pipelines for handwritten doctor prescriptions.
-- **Multi-Profile Support:** Manage separate health profiles for different family members.
+- **Phase 4: SQL Migration:** Moving from JSON storage to a robust SQL backend for multi-user support.
+- **Multi-Language Support:** Localizing the AI to speak Tamil, Hindi, and other Indian languages.
+- **Voice Interaction:** Allowing elderly users to speak to the assistant directly.
+- **PDF Report Generation:** Generating a clinical summary for users to show their doctors.
 
 ---
 

@@ -30,19 +30,23 @@ def check_drug_interactions(ingredients: list[str]) -> list[str]:
     return drug_interaction_service.check_interactions(ingredients)
 
 @tool
-def save_medication(brand_name: str, generic_ingredients: list[str]) -> str:
+def save_medications(medications: list[dict]) -> str:
     """
-    Use this tool to save a newly discovered medication to the user's persistent profile.
-    brand_name is the name on the package (e.g. 'Dolo 650').
-    generic_ingredients is the list of active ingredients you found for it.
+    Use this tool to save multiple newly discovered medications to the user's persistent profile at once.
+    Each item in the list must be a dictionary with:
+    - "brand_name": The name on the package (e.g. 'Dolo 650')
+    - "generic_ingredients": A list of active ingredients (e.g. ['Paracetamol'])
     """
-    memory_service.add_to_medical_memory({
-        "medications": [{
-            "name": brand_name,
-            "resolved_ingredients": generic_ingredients
-        }]
-    })
-    return f"Successfully saved medication {brand_name}."
+    for med in medications:
+        brand_name = med.get("brand_name")
+        generic_ingredients = med.get("generic_ingredients", [])
+        memory_service.add_to_medical_memory({
+            "medications": [{
+                "name": brand_name,
+                "resolved_ingredients": generic_ingredients
+            }]
+        })
+    return f"Successfully saved {len(medications)} medications."
 
 @tool
 def save_condition_or_allergy(entity_type: str, value: str) -> str:

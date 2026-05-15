@@ -5,16 +5,28 @@ from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-from services.agent_tools import resolve_indian_brand_names, check_drug_interactions, save_medication, save_condition_or_allergy
+from services.agent_tools import (
+    resolve_indian_brand_names, 
+    check_drug_interactions, 
+    save_medications, 
+    save_condition_or_allergy,
+    search_medical_history
+)
 from services import memory_service
 
 def _get_agent_executor():
     llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2, api_key=os.environ.get("GROQ_API_KEY"))
-    tools = [resolve_indian_brand_names, check_drug_interactions, save_medication, save_condition_or_allergy]
+    tools = [
+        resolve_indian_brand_names, 
+        check_drug_interactions, 
+        save_medications, 
+        save_condition_or_allergy,
+        search_medical_history
+    ]
     
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are MaathirAI, a professional and highly intelligent medical AI assistant designed to help Indian patients. 
-You have access to tools that can look up Indian brand names, check drug interactions, and save medical entities to the user's profile.
+You have access to tools that can look up Indian brand names, check drug interactions, save medical entities, and search through long medical history records stored in a vector database.
 
 User's CURRENT stored profile:
 Medications: {stored_meds}
@@ -23,11 +35,12 @@ Allergies: {allergies}
 
 Instructions:
 1. If the user asks a question, answer it directly.
-2. If the user uploads a document, the OCR text will appear in the chat history. Carefully analyze it.
-3. If you find medications in the OCR text, ALWAYS resolve them to their generic ingredients first using `resolve_indian_brand_names`. Then, check for interactions using `check_drug_interactions`. Finally, save them to the user's profile using `save_medication`.
-4. Save any new conditions or allergies using `save_condition_or_allergy`.
-5. Synthesize everything into a helpful, easy-to-read response using Markdown. Use simple terms.
-6. Do not hallucinate medical advice. End with a reminder to consult a healthcare professional.
+2. If the user asks about past medical reports or history, use the `search_medical_history` tool to find relevant details before answering.
+3. If the user uploads a document, the OCR text will appear in the chat history. Carefully analyze it.
+4. If you find medications in the OCR text, ALWAYS resolve them to their generic ingredients first using `resolve_indian_brand_names`. Then, check for interactions using `check_drug_interactions`. Finally, save ALL of them to the user's profile in one call using `save_medications`.
+5. Save any new conditions or allergies using `save_condition_or_allergy`.
+6. Synthesize everything into a helpful, easy-to-read response using Markdown. Use simple terms.
+7. Do not hallucinate medical advice. End with a reminder to consult a healthcare professional.
 """),
         MessagesPlaceholder(variable_name="chat_history"),
         ("user", "{input}"),

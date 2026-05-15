@@ -7,6 +7,9 @@ backend/.env
 *.pyd
 
 # Private Medical Data & Logs
+chroma_db/
+*.sqlite3
+
 backend/storage/chat_memory.json
 backend/storage/medical_memory.json
 

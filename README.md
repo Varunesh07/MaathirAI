@@ -1,36 +1,42 @@
 # MaathirAI - Medical Interaction Assistant
 
-MaathirAI is an intelligent, full-stack medical awareness assistant built specifically for Indian patients and caregivers. It helps you understand your medications, decode medical reports, and safely check for dangerous drug-drug interactions — all in one place.
- 
-Whether you're an elderly patient managing multiple prescriptions, a working adult tracking your own medicines, or a caregiver handling a family member's health — MaathirAI works the same way: upload a photo or PDF, and let the AI do the heavy lifting.
- 
-> **The name comes from *Maathirai* (மாத்திரை) — the Tamil word for *tablet*. Since MaathirAI uses AI to identify and analyse tablets and medicines, the name is a natural fit: Maathirai + AI = MaathirAI.**
+MaathirAI is an intelligent, full-stack medical awareness assistant built specifically for Indian patients and caregivers. It helps you understand your medications, decode medical reports, and safely navigate the Indian healthcare system.
+
+Whether you're an elderly patient managing multiple prescriptions, a working adult tracking your own medicines, or a caregiver handling a family member's health — MaathirAI works the same way: upload a report or prescription, and let the AI do the heavy lifting.
+
+> **The name comes from *Maathirai* (மாத்திரை) — the Tamil word for *tablet*. Since MaathirAI uses AI to identify and analyse tablets and medicines, the name is a natural fit: Maathir + AI = MaathirAI.**
 
 ---
- 
+
 ## 🎯 What MaathirAI Actually Does
- 
+
 ### 1. Autonomous Agentic Reasoning
-Powered by **LangChain**, MaathirAI uses an "Agentic" architecture. It doesn't just chat; it *reasons*. It autonomously decides when to look up an Indian brand name, when to check for a drug-drug interaction, and when to dig into your medical history.
+Powered by **LangChain**, MaathirAI uses an "Agentic" architecture. It doesn't just chat; it *reasons*. It autonomously decides when to look up an Indian brand name, when to check for a drug-drug interaction, and when to alert you about a potential concern.
 
 ### 2. Medical RAG (Retrieval-Augmented Generation)
-We've integrated **ChromaDB** and **Sentence-Transformers** to give the AI a "long-term memory." Every time you upload a report, it is chunked, vectorized, and stored. Even if you clear your chat history, the AI can still "retrieve" specific details like your blood sugar level or past test results from its vector database.
+We've integrated **ChromaDB** and **Sentence-Transformers** to give the AI a "long-term memory." Every time you upload a report, it is chunked, vectorized, and stored. Even if you clear your chat history, the AI remembers your medical documents for future analysis.
 
 ### 3. Resolves Indian Brand Names
-Most drug databases are US-centric. MaathirAI maps Indian brands like *Telma 40* or *Glimestar M2* to their generic ingredients (Telmisartan, Metformin, etc.) using a local database of ~20,000 products, ensuring accurate interaction checks.
+Most drug databases are US-centric. MaathirAI maps Indian brands like *Telma 40* or *Glimestar M2* to their generic ingredients (Telmisartan, Metformin, etc.) using a local database of ~20,000 products.
 
 ### 4. Smart Profile Management
-The AI is trained to be your medical secretary. If it spots a new medication, allergy, or condition in a report, it automatically updates your profile. It uses a **bulk-saving logic** to ensure that multiple findings in a single report are all captured accurately.
+The AI is trained to be your medical secretary. If it spots a new medication, allergy, or condition in a report, it automatically updates your profile. It uses a **bulk-saving logic** to ensure that multiple rapid updates don't cause conflicts.
 
 ---
 
 ## 🌟 Key Features
- 
+
 - **Agentic Search:** Uses the `search_medical_history` tool to query past reports in real-time.
 - **Vectorized OCR Pipeline:** Automatically indexes PDFs and images into a local ChromaDB store upon upload.
 - **Natural Conversations:** Designed with a "Short & Sweet" persona—it speaks like a friendly neighborhood doctor, avoiding heavy jargon and internal technical details.
 - **Interactive Sidebar:** Real-time sync between the AI's "thoughts" and the visual UI (Medications list, Interaction table).
 - **Privacy First:** Includes a "Clear Memory" function that wipes both your JSON profile and your vectorized ChromaDB history.
+
+---
+
+## 📸 Screenshots
+
+*Add your application screenshots here to showcase the UI and features.*
 
 ---
 
@@ -81,4 +87,4 @@ npm run dev
 ---
 
 ## ⚠️ Disclaimer
-**MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions. AI-estimated interactions must always be clinically verified.
+**MaathirAI is a developmental project and not a substitute for professional medical advice.** Always consult a healthcare professional or pharmacist before making medical decisions. AI-estimated interactions are informational only and should never replace a pharmacist's review.
